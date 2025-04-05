@@ -15,7 +15,8 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the generated JAR
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=builder /app/target/springboot-crud-app-0.0.1-SNAPSHOT.jar app.jar
+
 
 # ❌ Removed this line because it's banned in Railway
 # VOLUME /data
