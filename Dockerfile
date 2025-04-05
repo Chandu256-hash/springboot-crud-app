@@ -1,17 +1,28 @@
-# Use OpenJDK base image
-FROM openjdk:17-jdk-slim
+# Stage 1: Build the app using Maven
+FROM maven:3.9.3-eclipse-temurin-17 as builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy JAR file
-COPY target/my-app.jar app.jar
+# Copy the entire repo into the container
+COPY . .
 
-# Create a volume for persistent H2 storage
+# Build the app (you can skip tests if you want)
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run the app
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+# Copy the built JAR from the builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Create a directory for H2 database persistence
 VOLUME /data
 
-# Expose application and H2 console ports
-EXPOSE 8080 9092
+# Expose ports
+EXPOSE 8080
 
-# Run the application
+# Run the app
 ENTRYPOINT ["java", "-jar", "app.jar"]
