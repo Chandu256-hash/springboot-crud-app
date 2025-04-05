@@ -4,14 +4,14 @@ FROM openjdk:17-jdk-slim
 # Set working directory
 WORKDIR /app
 
-# Copy the JAR file
-COPY target/*.jar app.jar
+# Copy JAR file
+COPY target/my-app.jar app.jar
 
-# Create a directory for H2 database persistence
+# Create a volume for persistent H2 storage
 VOLUME /data
 
-# Expose H2 console & app port
-EXPOSE 8080
+# Expose application and H2 console ports
+EXPOSE 8080 9092
 
-# Run the app
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
