@@ -1,13 +1,12 @@
 # Stage 1: Build the app using Maven
 FROM maven:3.9.3-eclipse-temurin-17 as builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy the entire repo into the container
+# Copy everything to the container
 COPY . .
 
-# Build the app (you can skip tests if you want)
+# Build the JAR without running tests
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the app
@@ -15,14 +14,14 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copy the built JAR from the builder stage
+# Copy the generated JAR
 COPY --from=builder /app/target/*.jar app.jar
 
-# Create a directory for H2 database persistence
-VOLUME /data
+# ❌ Removed this line because it's banned in Railway
+# VOLUME /data
 
-# Expose ports
+# Expose the port your app runs on
 EXPOSE 8080
 
-# Run the app
+# Run the JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
